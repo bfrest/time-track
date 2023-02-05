@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
+import { daysOfTheWeek } from "../assets/daysOfTheWeek";
+import { months } from "../assets/months";
 
 const TimerView = styled.div`
   display: flex;
@@ -19,42 +21,26 @@ const Time = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
+  font-size: 3rem;
 `;
 
 const Info = styled.div`
-  border: 2px solid red;
+  background-color: #17181c;
+  font-size: 1.4rem;
   margin-top: 15px;
+  padding: 10px;
 `;
 
 const Timer = (props) => {
-  const [runningTimer, setRunningTimer] = useState("00:00:00");
+  const [runningTimer, setRunningTimer] = useState(0);
   const [description, setDescription] = useState(null);
-
-  // function to take the clocked in time and subtract it from the current time and display that number.
-  const compareTimes = (clockInMilliseconds) => {
-    // compare the current time to the clocked in time which is sent here through props
-    // then I want to convert the miliseconds into readable time and return that
-    let currentTimeMilliseconds = Date.now();
-
-    let hours = String(
-      Math.floor((currentTimeMilliseconds - clockInMilliseconds) / 1000 / 60 / 60),
-    ).padStart(2, 0);
-    let minutes = String(
-      Math.floor((currentTimeMilliseconds - clockInMilliseconds) / 1000 / 60),
-    ).padStart(2, 0);
-    let seconds = String(
-      Math.floor((currentTimeMilliseconds - clockInMilliseconds) / 1000),
-    ).padStart(2, 0);
-
-    return `${hours}:${minutes}:${seconds}`;
-  };
 
   useEffect(() => {
     let intervalId;
+
     if (props.clockedIn) {
       intervalId = setInterval(() => {
-        let timeLapsed = compareTimes(props.clockInTime);
-        setRunningTimer(timeLapsed);
+        setRunningTimer((runningTimer) => runningTimer + 1);
       }, 1000);
     } else {
       clearInterval(intervalId);
@@ -71,28 +57,28 @@ const Timer = (props) => {
 
   const handleReset = () => {
     props.setClockedIn(false);
-    setRunningTimer("00:00:00");
+    setRunningTimer(0);
     props.setClockedIn(false);
     props.setJobId(null);
     props.setCostCode(null);
   };
 
-  const cleanupRunningTime = (milliseconds) => {
-    let seconds = Math.floor(milliseconds / 1000 / 60);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
+  const cleanUpTime = (clockedInSeconds) => {
+    let seconds;
+    let minutes;
+    let hours;
 
-    seconds = seconds % 60;
-    minutes = minutes % 60;
-    return (
-      <span>
-        <span>{String(hours).padStart(2, 0)}</span>
-      </span>
-    );
+    // converts the number to a string and adds a 0 if single digit
+    seconds = String(Math.floor(clockedInSeconds % 60)).padStart(2, 0);
+    minutes = String(Math.floor(clockedInSeconds / 60)).padStart(2, 0);
+    hours = String(Math.floor(clockedInSeconds / 3600)).padStart(2, 0);
+
+    return `${hours}:${minutes}:${seconds}`;
   };
+
   return (
     <TimerView>
-      <Time>{runningTimer}</Time>
+      <Time>{cleanUpTime(runningTimer)}</Time>
 
       <button
         style={{ backgroundColor: "#FDD47F" }}
@@ -110,11 +96,17 @@ const Timer = (props) => {
       </button>
 
       <Info>
+        <p>Clocked in:</p>
         <p>Job: {props.jobId}</p>
-        <p>Cost Code: {props.costCode}</p>
+        <p> {props.costCode}</p>
         <p>
-          date: {props.clockInDate.getDate()}
-          {props.clockInDate.getMonth()}
+          {months[props.clockInDate.getMonth()]}-{props.clockInDate.getDate()}-
+          {props.clockInDate.getFullYear()}
+        </p>
+        <p>
+          {String(props.clockInDate.getHours()).padStart(2, 0)}:
+          {String(props.clockInDate.getMinutes()).padStart(2, 0)}:
+          {String(props.clockInDate.getSeconds()).padStart(2, 0)} a.m.
         </p>
       </Info>
     </TimerView>
