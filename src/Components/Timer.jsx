@@ -98,7 +98,7 @@ const Timer = (props) => {
       <Info>
         <p>Clocked in:</p>
         <p>Job: {props.jobId}</p>
-        <p> {props.costCode}</p>
+        <p>Cost Code: {props.costCode}</p>
         <p>
           {months[props.clockInDate.getMonth()]}-{props.clockInDate.getDate()}-
           {props.clockInDate.getFullYear()}

@@ -6,18 +6,26 @@ const ClockInFlow = styled.div`
 `;
 
 const ClockIn = (props) => {
+  let jobs = [];
+  let costCodes = [];
   let job;
   let costCode;
-  console.log(props.clockedIn);
+
+  for (let i = 500; i < 550; i++) {
+    jobs.push(i);
+  }
+
+  for (let j = 0; j < 700; j++) {
+    costCodes.push(j);
+  }
+
   return props.clockedIn ? (
     <ClockInFlow>
-      <select onChange={(e) => (job = e.target.value)}>
-        <option>536</option>
-        <option>537</option>
+      <select defaultValue={"Choose Job"} onChange={(e) => (job = e.target.value)}>
+        {jobs && jobs.map((item) => <option label={item}>{item}</option>)}
       </select>
       <select onChange={(e) => (costCode = e.target.value)}>
-        <option>02000 - earthwork</option>
-        <option>00300 - layout</option>
+        {costCodes && costCodes.map((item) => <option label={item}>{item}</option>)}
       </select>
       <button
         style={{ backgroundColor: "#9DE47C" }}
